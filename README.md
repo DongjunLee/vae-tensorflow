@@ -1,6 +1,6 @@
 
 
-# Relation Network [![hb-research](https://img.shields.io/badge/hb--research-experiment-green.svg?style=flat&colorA=448C57&colorB=555555)](https://github.com/hb-research)
+# Variational Autoencoder [![hb-research](https://img.shields.io/badge/hb--research-experiment-green.svg?style=flat&colorA=448C57&colorB=555555)](https://github.com/hb-research)
 
 TensorFlow implementation of [Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114).
 
@@ -30,7 +30,7 @@ Reference : [hb-config](https://github.com/hb-research/hb-config), [Dataset](htt
 
 ## Todo
 
-- model was trained on the joint version of bAbI (all 20 tasks simultaneously), using the full dataset of 10K examples per task. (paper experiments)
+- implements Variational Autoencoder
 
 ## Config
 
