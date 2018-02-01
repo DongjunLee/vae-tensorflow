@@ -46,17 +46,20 @@ class Model:
 
         self._build_prediction(output)
         if self.mode != tf.estimator.ModeKeys.PREDICT:
-            self._build_loss(output)
+            self._build_loss(output, graph.z_mean, graph.z_stddev)
             self._build_optimizer()
             self._build_metric()
 
     def _build_prediction(self, output):
         self.predictions = output
 
-    def _build_loss(self, logits):
+    def _build_loss(self, output, mean, stddev):
         with tf.variable_scope('loss'):
-            # TODO: reconstruction loss + KL divergence
-            self.loss = tf.losses.mean_squared_error(self.targets, logits)
+            reconstruction_error = tf.reduce_mean(
+                -tf.reduce_sum(self.targets * tf.log(output) + (1 - self.targets) * tf.log(1 - output), axis=1))
+            kl_divergence = -0.5 * tf.reduce_sum(1 + tf.log(tf.square(stddev)) - tf.square(mean) + tf.square(stddev), axis=1)
+
+            self.loss = tf.reduce_mean(kl_divergence + reconstruction_error)
 
     def _build_optimizer(self):
         self.train_op = tf.contrib.layers.optimize_loss(
@@ -67,6 +70,4 @@ class Model:
             name="train_op")
 
     def _build_metric(self):
-        # TODO: implements tf.metrics
-        #   example) {"accuracy": tf.metrics.accuracy(labels, predicitions)}
         self.metrics = {}

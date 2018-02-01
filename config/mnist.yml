@@ -1,8 +1,16 @@
 model:
   batch_size: 32
+  z_dim: 20
+  n_output: 784
+
+  encoder_h1: 256
+  encoder_h2: 128
+
+  decoder_h1: 128
+  decoder_h2: 256
 
 train:
-  learning_rate: 0.0001
+  learning_rate: 0.00001
   optimizer: 'Adam'                # Adagrad, Adam, Ftrl, Momentum, RMSProp, SGD
 
   train_steps: 100000
