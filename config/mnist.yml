@@ -3,17 +3,19 @@ model:
   z_dim: 20
   n_output: 784
 
-  encoder_h1: 256
-  encoder_h2: 128
+  encoder_h1: 512
+  encoder_h2: 384
+  encoder_h3: 256
 
-  decoder_h1: 128
-  decoder_h2: 256
+  decoder_h1: 256
+  decoder_h2: 384
+  decoder_h3: 512
 
 train:
   learning_rate: 0.00001
   optimizer: 'Adam'                # Adagrad, Adam, Ftrl, Momentum, RMSProp, SGD
 
-  train_steps: 100000
+  train_steps: 200000
   model_dir: 'logs/mnist'
 
   save_checkpoints_steps: 1000

@@ -35,10 +35,13 @@ class Model:
             predictions={"prediction": self.predictions})
 
     def _init_placeholder(self, features, labels):
-        self.inputs = features
-        if type(features) == dict:
-            self.inputs = features["input_data"]
-        self.targets = labels
+        if self.mode == tf.estimator.ModeKeys.PREDICT:
+            self.inputs = features["latent_vector"]
+        else:
+            self.inputs = features
+            if type(features) == dict:
+                self.inputs = features["input_data"]
+            self.targets = labels
 
     def build_graph(self):
         graph = variational_autoencoder.Graph(self.mode)
@@ -55,9 +58,11 @@ class Model:
 
     def _build_loss(self, output, mean, stddev):
         with tf.variable_scope('loss'):
-            reconstruction_error = tf.reduce_mean(
-                -tf.reduce_sum(self.targets * tf.log(output) + (1 - self.targets) * tf.log(1 - output), axis=1))
-            kl_divergence = -0.5 * tf.reduce_sum(1 + tf.log(tf.square(stddev)) - tf.square(mean) + tf.square(stddev), axis=1)
+            reconstruction_error = -tf.reduce_sum(self.targets * tf.log(output) + (1 - self.targets) * tf.log(1 - output), axis=1)
+            reconstruction_error = tf.reduce_mean(reconstruction_error)
+
+            kl_divergence = -0.5 * tf.reduce_sum(1 + tf.log(tf.square(stddev)) - tf.square(mean) - tf.square(stddev), axis=1)
+            kl_divergence = tf.reduce_mean(kl_divergence)
 
             self.loss = tf.reduce_mean(kl_divergence + reconstruction_error)
 
