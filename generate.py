@@ -2,7 +2,6 @@
 
 import argparse
 import os
-import sys
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -50,7 +49,6 @@ def main():
     latent_vector = np.random.normal(size=[Config.model.batch_size, Config.model.z_dim]).astype(np.float32)
     generated_x = generate(latent_vector)
     generated_x = np.array(generated_x)
-    print(generated_x.shape)
 
     n = np.sqrt(Config.model.batch_size).astype(np.int32)
     w = h = 28
@@ -61,10 +59,10 @@ def main():
             img[i*h:(i+1)*h, j*w:(j+1)*w] = generated_x[i*n+j, :].reshape(28, 28)
 
     plt.figure(figsize=(8, 8))
-    plt.imshow(img, cmap='gray')
-    plt.savefig('generate_image.png')
+    plt.imshow(img, cmap='gray_r')
+    plt.savefig(f"generate_image_z_{Config.model.z_dim}_{Config.model.batch_size}.png")
     plt.close()
-    print("generate image")
+    print("success to generate image.")
 
 
 if __name__ == '__main__':
