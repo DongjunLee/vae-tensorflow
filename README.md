@@ -4,6 +4,8 @@
 
 TensorFlow implementation of [Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114).
 
+![images](images/vae_4.png)
+
 ## Requirements
 
 - Python 3.6
@@ -11,6 +13,7 @@ TensorFlow implementation of [Auto-Encoding Variational Bayes](https://arxiv.org
 - [hb-config](https://github.com/hb-research/hb-config) (Singleton Config)
 - requests
 - [Slack Incoming Webhook URL](https://my.slack.com/services/new/incoming-webhook/)
+- Matplotlib
 
 
 ## Project Structure
@@ -28,10 +31,6 @@ init Project by [hb-base](https://github.com/hb-research/hb-base)
 
 Reference : [hb-config](https://github.com/hb-research/hb-config), [Dataset](https://www.tensorflow.org/api_docs/python/tf/data/Dataset#from_generator), [experiments_fn](https://www.tensorflow.org/api_docs/python/tf/contrib/learn/Experiment), [EstimatorSpec](https://www.tensorflow.org/api_docs/python/tf/estimator/EstimatorSpec)
 
-## Todo
-
-- implements Variational Autoencoder
-
 ## Config
 
 Can control all **Experimental environment**.
@@ -41,12 +40,22 @@ example: mnist.yml
 ```yml
 model:
   batch_size: 32
+  z_dim: 20
+  n_output: 784
+
+  encoder_h1: 512
+  encoder_h2: 256
+  encoder_h3: 128
+
+  decoder_h1: 128
+  decoder_h2: 256
+  decoder_h3: 512
 
 train:
-  learning_rate: 0.0001
+  learning_rate: 0.00001
   optimizer: 'Adam'                # Adagrad, Adam, Ftrl, Momentum, RMSProp, SGD
 
-  train_steps: 100000
+  train_steps: 200000
   model_dir: 'logs/mnist'
 
   save_checkpoints_steps: 1000
@@ -58,7 +67,6 @@ train:
 
 slack:
   webhook_url: ""                   # after training notify you using slack-webhook
-
 ```
 
 * debug mode : using [tfdbg](https://www.tensorflow.org/programmers_guide/debugger)
@@ -71,15 +79,22 @@ Install requirements.
 ```pip install -r requirements.txt```
 
 Then, start training model
+
 ```
 python main.py --config mnist
 ```
+
+After training, generate image from latent vector.
+
+```
+python generate.py --config mnist --batch_size 100
+```
+
 
 ### Experiments modes
 
 :white_check_mark: : Working  
 :white_medium_small_square: : Not tested yet.
-
 
 - :white_check_mark: `evaluate` : Evaluate on the evaluation data.
 - :white_medium_small_square: `extend_train_hooks` :  Extends the hooks for training.
@@ -95,6 +110,19 @@ python main.py --config mnist
 ### Tensorboar
 
 ```tensorboard --logdir logs```
+
+![images](images/vae-tensorboard.png)
+
+## Result
+
+- Generate Mnist image (Config: `mnist.yml`)
+
+![images](images/vae-results.png)
+
+## Reference
+- [hb-research/notes - Auto-Encoding Variational Bayes](https://github.com/hb-research/notes/blob/master/notes/vae.md)
+- [Paper - Auto-Encoding Variational Bayes](https://arxiv.org/abs/1609.05473)
+- [shaohua0116/VAE-Tensorflow ](https://github.com/shaohua0116/VAE-Tensorflow)
 
 ## Author
 
