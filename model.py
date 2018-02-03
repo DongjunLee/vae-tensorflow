@@ -59,19 +59,22 @@ class Model:
     def _build_loss(self, output, mean, stddev):
         with tf.variable_scope('loss'):
             reconstruction_error = -tf.reduce_sum(self.targets * tf.log(output) + (1 - self.targets) * tf.log(1 - output), axis=1)
-            reconstruction_error = tf.reduce_mean(reconstruction_error)
+            reconstruction_error = tf.reduce_mean(reconstruction_error, name="reconstruction_error")
 
             kl_divergence = -0.5 * tf.reduce_sum(1 + tf.log(tf.square(stddev)) - tf.square(mean) - tf.square(stddev), axis=1)
-            kl_divergence = tf.reduce_mean(kl_divergence)
+            kl_divergence = tf.reduce_mean(kl_divergence, name="kl_divergence")
 
             self.loss = tf.reduce_mean(kl_divergence + reconstruction_error)
+
+        tf.summary.scalar("loss/reconstruction_error", reconstruction_error)
+        tf.summary.scalar("loss/kl_divergence", kl_divergence)
 
     def _build_optimizer(self):
         self.train_op = tf.contrib.layers.optimize_loss(
             self.loss, tf.train.get_global_step(),
             optimizer=Config.train.get('optimizer', 'Adam'),
             learning_rate=Config.train.learning_rate,
-            summaries=['loss', 'gradients', 'learning_rate'],
+            summaries=['gradients', 'learning_rate'],
             name="train_op")
 
     def _build_metric(self):

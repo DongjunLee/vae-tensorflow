@@ -35,6 +35,10 @@ def experiment_fn(run_config, params):
     train_hooks = [train_input_hook]
     if Config.train.debug:
         train_hooks.append(tf_debug.LocalCLIDebugHook())
+    if Config.train.print_verbose:
+        train_hooks.append(tf.train.LoggingTensorHook(
+            ["loss/reconstruction_error", "loss/kl_divergence"],
+            every_n_iter=Config.train.check_hook_n_iter))
 
     eval_hooks = [test_input_hook]
     if Config.train.debug:
